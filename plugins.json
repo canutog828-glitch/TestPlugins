@@ -1,0 +1,24 @@
+[
+    {
+        "iconUrl": "https://lospobreflix.lat/favicon.ico",
+        "fileHash": "sha256-9f362c92ac0e1b9f3fb742a980972f323572fab645364f510168170ccc191b0f",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/canutog828-glitch/lospobreflix",
+        "fileSize": 16420,
+        "status": 1,
+        "language": "pt",
+        "authors": [
+            "lospobreflix"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries",
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "ExampleProvider",
+        "description": "Plugin para assistir filmes, s\u00e9ries, animes e doramas",
+        "url": "https://raw.githubusercontent.com/canutog828-glitch/lospobreflix/builds/ExampleProvider.cs3",
+        "name": "ExampleProvider"
+    }
+]
