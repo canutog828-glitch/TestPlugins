@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.TvType
 
 class ExampleProvider : MainAPI() { // All providers must be an instance of MainAPI
     override var mainUrl = "https://lospobreflix.lat"
-    override var name = "lospobreflix"
+    override var name = "lospobreflix1"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime)
 
     override var lang = "pt"
