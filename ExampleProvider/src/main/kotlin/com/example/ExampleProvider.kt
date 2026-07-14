@@ -192,10 +192,8 @@ class ExampleProvider : MainAPI() {
                            else href
             
             if (embedUrl.isNotEmpty() && embedUrl.startsWith("http")) {
-                val loaded = loadExtractor(embedUrl, data, subtitleCallback, callback)
-                if (loaded) {
-                    foundAny = true
-                }
+                loadExtractor<String>(embedUrl, data, subtitleCallback, callback)
+                foundAny = true
             }
         }
         
