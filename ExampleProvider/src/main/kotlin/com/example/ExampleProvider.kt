@@ -183,9 +183,13 @@ class ExampleProvider : MainAPI() {
         var foundAny = false
         
         for (element in playerElements) {
-            val embedUrl = element.attr("data-embed").takeIf { it.isNotEmpty() }
-                ?: element.attr("data-player").takeIf { it.isNotEmpty() }
-                ?: element.attr("href")
+            val embed = element.attr("data-embed")
+            val player = element.attr("data-player")
+            val href = element.attr("href")
+            
+            val embedUrl = if (embed.isNotEmpty()) embed 
+                           else if (player.isNotEmpty()) player 
+                           else href
             
             if (embedUrl.isNotEmpty() && embedUrl.startsWith("http")) {
                 val loaded = loadExtractor(embedUrl, data, subtitleCallback, callback)
