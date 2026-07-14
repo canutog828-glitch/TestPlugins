@@ -27,7 +27,7 @@ class ExampleProvider : MainAPI() {
         
         document.select("h3").forEach { h3 ->
             val a = h3.selectFirst("a") ?: return@forEach
-            val title = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
+            val title: String = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
             val url = a.attr("href")
             if (url.isEmpty()) return@forEach
             
@@ -61,7 +61,7 @@ class ExampleProvider : MainAPI() {
         
         document.select("h3").forEach { h3 ->
             val a = h3.selectFirst("a") ?: return@forEach
-            val title = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
+            val title: String = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
             val url = a.attr("href")
             if (url.isEmpty()) return@forEach
             
