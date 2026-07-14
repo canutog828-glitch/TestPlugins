@@ -94,18 +94,18 @@ class ExampleProvider : MainAPI() {
         
         val title = document.selectFirst("h1.text-lead")?.text() ?: return null
         
-        val bannerRaw = document.selectFirst("img[alt*=\"backdrop\"]")?.attr("data-src")
+        val bannerRaw: String? = document.selectFirst("img[alt*=\"backdrop\"]")?.attr("data-src")
             ?: document.selectFirst("img[alt*=\"backdrop\"]")?.attr("src")
         val banner = cleanImageUrl(bannerRaw)
         
-        val posterRaw = document.selectFirst("img[alt*=\"poster\"]")?.attr("data-src")
+        val posterRaw: String? = document.selectFirst("img[alt*=\"poster\"]")?.attr("data-src")
             ?: document.selectFirst("img[alt*=\"poster\"]")?.attr("src")
             ?: bannerRaw
         val poster = cleanImageUrl(posterRaw)
         
         val plot = document.selectFirst("div.text-slate-700 p, div.text-slate-200 p")?.text() 
             ?: document.selectFirst(".sinopse-text, p")?.text() 
-            ?: "Sem sinopse disponÃ­vel."
+            ?: "Sem sinopse disponível."
         
         val isSeries = url.contains("/serie/") || url.contains("/series/") || document.select("a.seasonLoaderBtn").isNotEmpty()
         
