@@ -131,13 +131,12 @@ class ExampleProvider : MainAPI() {
                         val epName = epLink.text().trim()
                         val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: 1
                         
-                        episodes.add(Episode(
-                            data = epUrl,
-                            name = epName,
-                            season = seasonNum,
-                            episode = epNum,
-                            posterUrl = poster
-                        ))
+                        episodes.add(newEpisode(epUrl) {
+    this.name = epName
+    this.season = seasonNum
+    this.episode = epNum
+    this.posterUrl = poster
+})
                     }
                 }
             } else {
@@ -148,13 +147,12 @@ class ExampleProvider : MainAPI() {
                     val epName = epLink.text().trim()
                     val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: (index + 1)
                     
-                    episodes.add(Episode(
-                        data = epUrl,
-                        name = epName,
-                        season = 1,
-                        episode = epNum,
-                        posterUrl = poster
-                    ))
+                    episodes.add(newEpisode(epUrl) {
+    this.name = epName
+    this.season = 1
+    this.episode = epNum
+    this.posterUrl = poster
+})
                 }
             }
             
