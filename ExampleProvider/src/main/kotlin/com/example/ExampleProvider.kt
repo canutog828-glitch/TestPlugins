@@ -14,21 +14,19 @@ class ExampleProvider : MainAPI() {
     override val hasMainPage = true
 
     private val interceptor = CloudflareKiller()
-    private val client = app.clone().addInterceptor(interceptor)
 
     override val mainPage = mainPageOf(
         "$mainUrl/" to "Home"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val response = client.get(request.data)
+        val response = app.get(request.data, interceptor = interceptor)
         val document = response.document
         val homeItems = mutableListOf<SearchResponse>()
         
         document.select("h3").forEach { h3 ->
             val a = h3.selectFirst("a") ?: return@forEach
-            val titleText = a.text()
-            val title = if (titleText.isNotEmpty()) titleText else h3.attr("title")
+            val title: String = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
             val url = a.attr("href")
             if (url.isEmpty()) return@forEach
             
@@ -56,14 +54,13 @@ class ExampleProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        val response = client.get("$mainUrl/?s=$query")
+        val response = app.get("$mainUrl/?s=$query", interceptor = interceptor)
         val document = response.document
         val searchResults = mutableListOf<SearchResponse>()
         
         document.select("h3").forEach { h3 ->
             val a = h3.selectFirst("a") ?: return@forEach
-            val titleText = a.text()
-            val title = if (titleText.isNotEmpty()) titleText else h3.attr("title")
+            val title: String = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
             val url = a.attr("href")
             if (url.isEmpty()) return@forEach
             
@@ -91,7 +88,7 @@ class ExampleProvider : MainAPI() {
     }
 
     override suspend fun load(url: String): LoadResponse? {
-        val response = client.get(url)
+        val response = app.get(url, interceptor = interceptor)
         val document = response.document
         
         val title = document.selectFirst("h1.text-lead")?.text() ?: return null
@@ -121,7 +118,7 @@ class ExampleProvider : MainAPI() {
                     val seasonUrl = btn.attr("href")
                     if (seasonUrl.isEmpty()) continue
                     
-                    val seasonResponse = client.get(seasonUrl)
+                    val seasonResponse = app.get(seasonUrl, interceptor = interceptor)
                     val seasonDoc = seasonResponse.document
                     
                     val epLinks = seasonDoc.select("a[href*=\"/episodio/\"], a[href*=\"/episodios/\"], .episode-card a, .episodios a")
@@ -132,11 +129,11 @@ class ExampleProvider : MainAPI() {
                         val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: 1
                         
                         episodes.add(newEpisode(epUrl) {
-    this.name = epName
-    this.season = seasonNum
-    this.episode = epNum
-    this.posterUrl = poster
-})
+                            this.name = epName
+                            this.season = seasonNum
+                            this.episode = epNum
+                            this.posterUrl = poster
+                        })
                     }
                 }
             } else {
@@ -148,11 +145,11 @@ class ExampleProvider : MainAPI() {
                     val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: (index + 1)
                     
                     episodes.add(newEpisode(epUrl) {
-    this.name = epName
-    this.season = 1
-    this.episode = epNum
-    this.posterUrl = poster
-})
+                        this.name = epName
+                        this.season = 1
+                        this.episode = epNum
+                        this.posterUrl = poster
+                    })
                 }
             }
             
@@ -176,7 +173,7 @@ class ExampleProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        val response = client.get(data)
+        val response = app.get(data, interceptor = interceptor)
         val document = response.document
         
         val playerElements = document.select("[data-embed], [data-player], .player_select_item, a[href*=\"embed\"], a[href*=\"player\"], a[href*=\"watch\"]")
