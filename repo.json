@@ -2,5 +2,7 @@
     "name": "lospobleflix",
     "description": "plugin ptbr",
     "manifestVersion": 1,
-    "pluginListsUrl": "https://raw.githubusercontent.com/canutog828-glitch/TestPlugins/builds/plugins.json"
+    "pluginLists": [
+        "https://raw.githubusercontent.com/canutog828-glitch/TestPlugins/builds/plugins.json"
+    ]
 }
