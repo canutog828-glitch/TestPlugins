@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.app
 
 class ExampleProvider : MainAPI() {
     override var mainUrl = "https://lospobreflix.lat"
-    override var name = "LosPobreFlix"
+    override var name = "LosPobreFli"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime)
 
     override var lang = "pt"
