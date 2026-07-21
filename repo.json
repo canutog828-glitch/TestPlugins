@@ -1,8 +1,13 @@
 {
-    "name": "lospoblefli",
-    "description": "plugin ptbr",
-    "manifestVersion": 1,
-    "pluginLists": [
-        "https://raw.githubusercontent.com/canutog828-glitch/TestPlugins/builds/plugins.json"
-    ]
+  "name": "TestPlugins",
+  "description": "Test Repository for CloudStream",
+  "version": "1.0",
+  "plugins": [
+    {
+      "name": "LosPobreFli",
+      "description": "LosPobreFli Plugin",
+      "version": "1.0",
+      "url": "https://raw.githubusercontent.com/canutog828-glitch/TestPlugins/refs/heads/master/LosPobreFli.zip"
+    }
+  ]
 }
