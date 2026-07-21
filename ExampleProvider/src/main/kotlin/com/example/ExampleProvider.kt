@@ -194,16 +194,17 @@ class ExampleProvider : MainAPI() {
             ?: listOf("warezcdn.lat", "superflixapi.pro")
 
         var foundAny = false
-        for (api in apis) {
-            val embedUrl = if (playerType == "episodio") {
-                "https://$api/serie/$apiContentId/$season/$episode"
-            } else {
-                "https://$api/filme/$apiContentId"
-            }
-            val loaded = loadExtractor(embedUrl, data, subtitleCallback, callback)
-            if (loaded) foundAny = true
-        }
-
-        return foundAny
+for (api in apis) {
+    val embedUrl = if (playerType == "episodio") {
+        "https://$api/serie/$apiContentId/$season/$episode"
+    } else {
+        "https://$api/filme/$apiContentId"
     }
+    Log.d("URL de reprodução", embedUrl)
+
+    val loaded = loadExtractor(embedUrl, data, subtitleCallback, callback)
+    Log.d("API de reprodução", "Chamada de API: $embedUrl")
 }
+
+return foundAny
+        
