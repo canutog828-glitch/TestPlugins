@@ -2,9 +2,9 @@ package com.example
 
 import android.util.Log
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.network.CloudflareKiller
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.*
 
 class ExampleProvider : MainAPI() {
     override var mainUrl = "https://lospobreflix.lat"
@@ -21,7 +21,7 @@ class ExampleProvider : MainAPI() {
     )
 
     private fun cleanImageUrl(url: String?): String? {
-        if (url == null) return null
+        if (url.isNullOrBlank()) return null
         val secondHttpIndex = url.indexOf("http", 1)
         return if (secondHttpIndex > 0) url.substring(secondHttpIndex) else url
     }
@@ -41,13 +41,13 @@ class ExampleProvider : MainAPI() {
 
         document.select("h3").forEach { h3 ->
             val a = h3.selectFirst("a") ?: return@forEach
-            val title = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
+            val title = a.text().takeIf { it.isNotBlank() } ?: h3.attr("title")
             val url = a.attr("href")
-            if (url.isEmpty()) return@forEach
+            if (url.isBlank()) return@forEach
 
             val parent = h3.parents().firstOrNull { p -> p.selectFirst("img") != null }
             val img = parent?.selectFirst("img")
-            val posterRaw = img?.attr("data-src")?.takeIf { it.isNotEmpty() } ?: img?.attr("src")
+            val posterRaw = img?.attr("data-src")?.takeIf { it.isNotBlank() } ?: img?.attr("src")
             val poster = cleanImageUrl(posterRaw)
 
             val type = detectType(url)
@@ -87,12 +87,12 @@ class ExampleProvider : MainAPI() {
 
         val title = document.selectFirst("h1.text-lead")?.text() ?: return null
 
-        val bannerRaw: String? = document.selectFirst("img[alt*="backdrop"]")?.attr("data-src")
-            ?: document.selectFirst("img[alt*="backdrop"]")?.attr("src")
+        val bannerRaw = document.selectFirst("img[alt*='backdrop']")?.attr("data-src")
+            ?: document.selectFirst("img[alt*='backdrop']")?.attr("src")
         val banner = cleanImageUrl(bannerRaw)
 
-        val posterRaw: String? = document.selectFirst("img[alt*="poster"]")?.attr("data-src")
-            ?: document.selectFirst("img[alt*="poster"]")?.attr("src")
+        val posterRaw = document.selectFirst("img[alt*='poster']")?.attr("data-src")
+            ?: document.selectFirst("img[alt*='poster']")?.attr("src")
             ?: bannerRaw
         val poster = cleanImageUrl(posterRaw)
 
@@ -112,55 +112,55 @@ class ExampleProvider : MainAPI() {
                 for (btn in seasonBtns) {
                     val seasonNum = btn.attr("data-season").toIntOrNull() ?: 1
                     val seasonUrl = btn.attr("href")
-                    if (seasonUrl.isEmpty()) continue
+                    if (seasonUrl.isBlank()) continue
 
                     val seasonResponse = app.get(seasonUrl, interceptor = interceptor)
                     val seasonDoc = seasonResponse.document
 
-                    val epLinks = seasonDoc.select("a[href*="/episodio/"], a[href*="/episodios/"], .episode-card a, .episodios a")
+                    val epLinks = seasonDoc.select("a[href*='/episodio/'], a[href*='/episodios/'], .episode-card a, .episodios a")
                     epLinks.forEach { epLink ->
                         val epUrl = epLink.attr("href")
-                        if (epUrl.isEmpty()) return@forEach
+                        if (epUrl.isBlank()) return@forEach
 
                         val epName = epLink.text().trim()
                         val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: 1
 
                         episodes.add(newEpisode(epUrl) {
-                            this.name = epName
-                            this.season = seasonNum
-                            this.episode = epNum
-                            this.posterUrl = poster
+                            name = epName
+                            season = seasonNum
+                            episode = epNum
+                            posterUrl = poster
                         })
                     }
                 }
             } else {
-                val epLinks = document.select("a[href*="/episodio/"], a[href*="/episodios/"], .episode-card a, .episodios a")
+                val epLinks = document.select("a[href*='/episodio/'], a[href*='/episodios/'], .episode-card a, .episodios a")
                 epLinks.forEachIndexed { index, epLink ->
                     val epUrl = epLink.attr("href")
-                    if (epUrl.isEmpty()) return@forEachIndexed
+                    if (epUrl.isBlank()) return@forEachIndexed
 
                     val epName = epLink.text().trim()
                     val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: (index + 1)
 
                     episodes.add(newEpisode(epUrl) {
-                        this.name = epName
-                        this.season = 1
-                        this.episode = epNum
-                        this.posterUrl = poster
+                        name = epName
+                        season = 1
+                        episode = epNum
+                        posterUrl = poster
                     })
                 }
             }
 
             return newTvSeriesLoadResponse(title, url, type, episodes) {
-                this.posterUrl = poster
-                this.backgroundPosterUrl = banner
-                this.plot = plot
+                posterUrl = poster
+                backgroundPosterUrl = banner
+                plot = plot
             }
         } else {
             return newMovieLoadResponse(title, url, TvType.Movie, url) {
-                this.posterUrl = poster
-                this.backgroundPosterUrl = banner
-                this.plot = plot
+                posterUrl = poster
+                backgroundPosterUrl = banner
+                plot = plot
             }
         }
     }
@@ -176,7 +176,7 @@ class ExampleProvider : MainAPI() {
 
         val playerDiv = document.selectFirst("[data-apicontentid]") ?: return false
         val apiContentId = playerDiv.attr("data-apicontentid")
-        if (apiContentId.isEmpty()) return false
+        if (apiContentId.isBlank()) return false
 
         val playerType = playerDiv.attr("data-playertype")
         val season = playerDiv.attr("data-season").toIntOrNull() ?: 1
@@ -190,7 +190,12 @@ class ExampleProvider : MainAPI() {
             ?.substringAfter("__PLAYER_APIS__")
             ?.substringAfter("[")
             ?.substringBefore("]")
-            ?.let { Regex(""([a-zA-Z0-9.\\-]+)"").findAll(it).map { m -> m.groupValues[1] }.toList() }
+            ?.let {
+                Regex(""([a-zA-Z0-9.\\-]+)"")
+                    .findAll(it)
+                    .map { match -> match.groupValues[1] }
+                    .toList()
+            }
             ?: listOf("warezcdn.lat", "superflixapi.pro")
 
         var foundAny = false
@@ -202,12 +207,9 @@ class ExampleProvider : MainAPI() {
                 "https://$api/filme/$apiContentId"
             }
 
-            Log.d("URL de reprodução", embedUrl)
-
+            Log.d("ExampleProvider", "Tentando: $embedUrl")
             val loaded = loadExtractor(embedUrl, data, subtitleCallback, callback)
             foundAny = foundAny || loaded
-
-            Log.d("API de reprodução", "Chamada de API: $embedUrl -> $loaded")
         }
 
         return foundAny
