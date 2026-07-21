@@ -23,10 +23,7 @@ class ExampleProvider : MainAPI() {
     private fun cleanImageUrl(url: String?): String? {
         if (url == null) return null
         val secondHttpIndex = url.indexOf("http", 1)
-        if (secondHttpIndex > 0) {
-            return url.substring(secondHttpIndex)
-        }
-        return url
+        return if (secondHttpIndex > 0) url.substring(secondHttpIndex) else url
     }
 
     private fun detectType(url: String): TvType {
@@ -44,7 +41,7 @@ class ExampleProvider : MainAPI() {
 
         document.select("h3").forEach { h3 ->
             val a = h3.selectFirst("a") ?: return@forEach
-            val title: String = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
+            val title = a.text().takeIf { it.isNotEmpty() } ?: h3.attr("title")
             val url = a.attr("href")
             if (url.isEmpty()) return@forEach
 
@@ -90,12 +87,12 @@ class ExampleProvider : MainAPI() {
 
         val title = document.selectFirst("h1.text-lead")?.text() ?: return null
 
-        val bannerRaw: String? = document.selectFirst("img[alt*=\"backdrop\"]")?.attr("data-src")
-            ?: document.selectFirst("img[alt*=\"backdrop\"]")?.attr("src")
+        val bannerRaw: String? = document.selectFirst("img[alt*="backdrop"]")?.attr("data-src")
+            ?: document.selectFirst("img[alt*="backdrop"]")?.attr("src")
         val banner = cleanImageUrl(bannerRaw)
 
-        val posterRaw: String? = document.selectFirst("img[alt*=\"poster\"]")?.attr("data-src")
-            ?: document.selectFirst("img[alt*=\"poster\"]")?.attr("src")
+        val posterRaw: String? = document.selectFirst("img[alt*="poster"]")?.attr("data-src")
+            ?: document.selectFirst("img[alt*="poster"]")?.attr("src")
             ?: bannerRaw
         val poster = cleanImageUrl(posterRaw)
 
@@ -120,10 +117,11 @@ class ExampleProvider : MainAPI() {
                     val seasonResponse = app.get(seasonUrl, interceptor = interceptor)
                     val seasonDoc = seasonResponse.document
 
-                    val epLinks = seasonDoc.select("a[href*=\"/episodio/\"], a[href*=\"/episodios/\"], .episode-card a, .episodios a")
+                    val epLinks = seasonDoc.select("a[href*="/episodio/"], a[href*="/episodios/"], .episode-card a, .episodios a")
                     epLinks.forEach { epLink ->
                         val epUrl = epLink.attr("href")
                         if (epUrl.isEmpty()) return@forEach
+
                         val epName = epLink.text().trim()
                         val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: 1
 
@@ -136,10 +134,11 @@ class ExampleProvider : MainAPI() {
                     }
                 }
             } else {
-                val epLinks = document.select("a[href*=\"/episodio/\"], a[href*=\"/episodios/\"], .episode-card a, .episodios a")
+                val epLinks = document.select("a[href*="/episodio/"], a[href*="/episodios/"], .episode-card a, .episodios a")
                 epLinks.forEachIndexed { index, epLink ->
                     val epUrl = epLink.attr("href")
                     if (epUrl.isEmpty()) return@forEachIndexed
+
                     val epName = epLink.text().trim()
                     val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: (index + 1)
 
@@ -191,21 +190,26 @@ class ExampleProvider : MainAPI() {
             ?.substringAfter("__PLAYER_APIS__")
             ?.substringAfter("[")
             ?.substringBefore("]")
-            ?.let { Regex("\"([a-zA-Z0-9.\\-]+)\"").findAll(it).map { m -> m.groupValues[1] }.toList() }
+            ?.let { Regex(""([a-zA-Z0-9.\\-]+)"").findAll(it).map { m -> m.groupValues[1] }.toList() }
             ?: listOf("warezcdn.lat", "superflixapi.pro")
 
         var foundAny = false
-for (api in apis) {
-    val embedUrl = if (playerType == "episodio") {
-        "https://$api/serie/$apiContentId/$season/$episode"
-    } else {
-        "https://$api/filme/$apiContentId"
-    }
-    Log.d("URL de reprodução", embedUrl)
 
-    val loaded = loadExtractor(embedUrl, data, subtitleCallback, callback)
-    Log.d("API de reprodução", "Chamada de API: $embedUrl")
+        for (api in apis) {
+            val embedUrl = if (playerType == "episodio") {
+                "https://$api/serie/$apiContentId/$season/$episode"
+            } else {
+                "https://$api/filme/$apiContentId"
+            }
+
+            Log.d("URL de reprodução", embedUrl)
+
+            val loaded = loadExtractor(embedUrl, data, subtitleCallback, callback)
+            foundAny = foundAny || loaded
+
+            Log.d("API de reprodução", "Chamada de API: $embedUrl -> $loaded")
+        }
+
+        return foundAny
+    }
 }
-
-return foundAny
-    }
