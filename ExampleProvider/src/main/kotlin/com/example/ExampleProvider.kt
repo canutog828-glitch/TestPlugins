@@ -39,11 +39,11 @@ class ExampleProvider : MainAPI() {
     private fun parseCardList(document: org.jsoup.nodes.Document): List<SearchResponse> {
         val results = mutableListOf<SearchResponse>()
 
-        document.select("h3").forEach { h3 ->
-            val a = h3.selectFirst("a") ?: return@forEach
+        for (h3 in document.select("h3")) {
+            val a = h3.selectFirst("a") ?: continue
             val title = a.text().takeIf { it.isNotBlank() } ?: h3.attr("title")
             val url = a.attr("href")
-            if (url.isBlank()) return@forEach
+            if (url.isBlank()) continue
 
             val parent = h3.parents().firstOrNull { p -> p.selectFirst("img") != null }
             val img = parent?.selectFirst("img")
@@ -118,18 +118,19 @@ class ExampleProvider : MainAPI() {
                     val seasonDoc = seasonResponse.document
 
                     val epLinks = seasonDoc.select("a[href*='/episodio/'], a[href*='/episodios/'], .episode-card a, .episodios a")
-                    epLinks.forEach { epLink ->
+                    for (epLink in epLinks) {
                         val epUrl = epLink.attr("href")
-                        if (epUrl.isBlank()) return@forEach
+                        if (epUrl.isBlank()) continue
 
                         val epName = epLink.text().trim()
                         val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: 1
 
+                        // Correção aqui: Uso das propriedades corretas aceitas pela DSL do Cloudstream
                         episodes.add(newEpisode(epUrl) {
-                            name = epName
-                            season = seasonNum
-                            episode = epNum
-                            posterUrl = poster
+                            this.name = epName
+                            this.season = seasonNum
+                            this.episode = epNum
+                            this.posterUrl = poster
                         })
                     }
                 }
@@ -142,25 +143,26 @@ class ExampleProvider : MainAPI() {
                     val epName = epLink.text().trim()
                     val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: (index + 1)
 
+                    // Correção aqui: Uso das propriedades corretas aceitas pela DSL do Cloudstream
                     episodes.add(newEpisode(epUrl) {
-                        name = epName
-                        season = 1
-                        episode = epNum
-                        posterUrl = poster
+                        this.name = epName
+                        this.season = 1
+                        this.episode = epNum
+                        this.posterUrl = poster
                     })
                 }
             }
 
             return newTvSeriesLoadResponse(title, url, type, episodes) {
-                posterUrl = poster
-                backgroundPosterUrl = banner
-                plot = plot
+                this.posterUrl = poster
+                this.backgroundPosterUrl = banner
+                this.plot = plot
             }
         } else {
             return newMovieLoadResponse(title, url, TvType.Movie, url) {
-                posterUrl = poster
-                backgroundPosterUrl = banner
-                plot = plot
+                this.posterUrl = poster
+                this.backgroundPosterUrl = banner
+                this.plot = plot
             }
         }
     }
@@ -190,10 +192,11 @@ class ExampleProvider : MainAPI() {
             ?.substringAfter("__PLAYER_APIS__")
             ?.substringAfter("[")
             ?.substringBefore("]")
-            ?.let {
-                Regex(""([a-zA-Z0-9.\\-]+)"")
-                    .findAll(it)
-                    .map { match -> match.groupValues[1] }
+            ?.let { block ->
+                // Correção aqui: uso correto de aspas normais prontas para String e escape manual delas.
+                Regex("\"([a-zA-Z0-9.\\-]+)\"")
+                    .findAll(block)
+                    .map { match -> match.groupValues[1] } // Coleta o valor de dentro do grupo 1 capturado
                     .toList()
             }
             ?: listOf("warezcdn.lat", "superflixapi.pro")
