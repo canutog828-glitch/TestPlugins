@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.*
 
 class LosPobreFlixProvider : MainAPI() {
     override var mainUrl = "https://lospobreflix.lat"
-    override var name = "LosPobreFli"
+    override var name = "LosPobreFlix"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime)
 
     override var lang = "pt"
