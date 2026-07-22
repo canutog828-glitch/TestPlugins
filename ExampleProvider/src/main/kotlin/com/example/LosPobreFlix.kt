@@ -125,7 +125,6 @@ class LosPobreFlixProvider : MainAPI() {
                         val epName = epLink.text().trim()
                         val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: 1
 
-                        // Correção aqui: Uso das propriedades corretas aceitas pela DSL do Cloudstream
                         episodes.add(newEpisode(epUrl) {
                             this.name = epName
                             this.season = seasonNum
@@ -143,7 +142,6 @@ class LosPobreFlixProvider : MainAPI() {
                     val epName = epLink.text().trim()
                     val epNum = epName.filter { it.isDigit() }.toIntOrNull() ?: (index + 1)
 
-                    // Correção aqui: Uso das propriedades corretas aceitas pela DSL do Cloudstream
                     episodes.add(newEpisode(epUrl) {
                         this.name = epName
                         this.season = 1
@@ -193,10 +191,10 @@ class LosPobreFlixProvider : MainAPI() {
             ?.substringAfter("[")
             ?.substringBefore("]")
             ?.let { block ->
-                // Correção aqui: uso correto de aspas normais prontas para String e escape manual delas.
-                Regex("\"([a-zA-Z0-9.\\-]+)\"")
+                // Ajustado o posicionamento do hífen dentro do colchete
+                Regex("\"([a-zA-Z0-9.-]+)\"")
                     .findAll(block)
-                    .map { match -> match.groupValues[1] } // Coleta o valor de dentro do grupo 1 capturado
+                    .map { match -> match.groupValues[1] }
                     .toList()
             }
             ?: listOf("warezcdn.lat", "superflixapi.pro")
