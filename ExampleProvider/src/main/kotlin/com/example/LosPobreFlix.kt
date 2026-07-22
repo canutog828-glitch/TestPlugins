@@ -6,7 +6,7 @@ import com.lagradost.cloudstream3.network.CloudflareKiller
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
-class ExampleProvider : MainAPI() {
+class LosPobreFlixProvider : MainAPI() {
     override var mainUrl = "https://lospobreflix.lat"
     override var name = "LosPobreFli"
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries, TvType.Anime)
