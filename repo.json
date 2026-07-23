@@ -4,8 +4,8 @@
   "version": "1.0",
   "plugins": [
     {
-      "name": "LosPobreFli",
-      "description": "LosPobreFli Plugin",
+      "name": "LosPobreFlix",
+      "description": "LosPobreFlix Plugin",
       "version": "1.0",
       "url": "https://raw.githubusercontent.com/canutog828-glitch/TestPlugins/refs/heads/master/LosPobreFli.zip"
     }
