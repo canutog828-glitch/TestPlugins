@@ -7,7 +7,7 @@
       "name": "LosPobreFlix",
       "description": "LosPobreFlix Plugin",
       "version": "1.0",
-      "url": "https://raw.githubusercontent.com/canutog828-glitch/TestPlugins/refs/heads/master/LosPobreFli.zip"
+      "url": "https://cdn.jsdelivr.net/gh/canutog828-glitch/TestPlugins@builds/plugins.json"
     }
   ]
 }
