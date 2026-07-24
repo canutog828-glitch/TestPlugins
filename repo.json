@@ -1,13 +1,8 @@
 {
   "name": "TestPlugins",
   "description": "Test Repository for CloudStream",
-  "version": "1.0",
-  "plugins": [
-    {
-      "name": "LosPobreFlix",
-      "description": "LosPobreFlix Plugin",
-      "version": "1.0",
-      "url": "https://cdn.jsdelivr.net/gh/canutog828-glitch/TestPlugins@builds/plugins.json"
-    }
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/canutog828-glitch/TestPlugins/builds/plugins.json"
   ]
 }
