@@ -1,4 +1,4 @@
-package com.example
+package com.lospobreflix
 
 import android.util.Log
 import com.lagradost.cloudstream3.*
